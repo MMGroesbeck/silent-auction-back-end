@@ -15,7 +15,7 @@ exports.up = function (knex) {
         tbl.text("name").notNullable().index();
         tbl.text("description").index();
         tbl
-          .integer("user_id")
+          .integer('user_id')
           .unsigned()
           .notNullable()
           .references("id")
@@ -27,18 +27,18 @@ exports.up = function (knex) {
         tbl.datetime("end_datetime").notNullable();
       })
       //bids table
-      .createTable("bids", (tbl) => {
-        tbl.increments();
+      .createTable('bids', tbl => {
+        tbl.increments('id');
         tbl
-          .integer("user_id")
+          .integer('user_id')
           .unsigned()
           .notNullable()
-          .references("id")
-          .inTable("users")
-          .onUpdate("CASCADE")
-          .onDelete("RESTRICT");
+          .references('id')
+          .inTable('users')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
         tbl
-          .integer("auction_id")
+          .integer('auction_id')
           .unsigned()
           .notNullable()
           .references("id")
@@ -49,24 +49,24 @@ exports.up = function (knex) {
         tbl.datetime("bid_time").defaultTo(knex.fn.now()).notNullable();
       })
       //watching table
-      .createTable("watching", (tbl) => {
-        tbl.increments();
+      .createTable('watching', tbl => {
+        tbl.increments('id');
         tbl
-          .integer("user_id")
+          .integer('user_id')
           .unsigned()
           .notNullable()
-          .references("id")
-          .inTable("users")
-          .onUpdate("CASCADE")
-          .onDelete("RESTRICT");
+          .references('id')
+          .inTable('users')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
         tbl
-          .integer("auction_id")
+          .integer('auction_id')
           .unsigned()
           .notNullable()
-          .references("id")
-          .inTable("auctions")
-          .onUpdate("CASCADE")
-          .onDelete("RESTRICT");
+          .references('id')
+          .inTable('auctions')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
       })
   );
 };
