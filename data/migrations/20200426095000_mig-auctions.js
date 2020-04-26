@@ -23,7 +23,7 @@ exports.up = function (knex) {
           .onUpdate("CASCADE")
           .onDelete("RESTRICT");
         tbl.text("image_url");
-        tbl.datetime("start_datetime").defaultTo(knex.fn.now(6)).notNullable();
+        tbl.datetime("start_datetime").defaultTo(knex.fn.now()).notNullable();
         tbl.datetime("end_datetime").notNullable();
       })
       //bids table
@@ -46,7 +46,7 @@ exports.up = function (knex) {
           .onUpdate("CASCADE")
           .onDelete("RESTRICT");
         tbl.decimal("bid_amount").notNullable();
-        tbl.datetime("bid_time").defaultTo(knex.fn.now(6)).notNullable();
+        tbl.datetime("bid_time").defaultTo(knex.fn.now()).notNullable();
       })
       //watching table
       .createTable("watching", (tbl) => {
