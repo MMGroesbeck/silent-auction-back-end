@@ -24,21 +24,21 @@ exports.up = function (knex) {
           .onDelete("RESTRICT");
         tbl.text("image_url");
         tbl.datetime("start_datetime").defaultTo(knex.fn.now()).notNullable();
-        tbl.datetime("end_datetime").notNullable();
+        tbl.datetime("end_datetime").notNullable(); /////////////
       })
       //bids table
-      .createTable('bids', tbl => {
-        tbl.increments('id');
+      .createTable("bids", (tbl) => {
+        tbl.increments();
         tbl
-          .integer('user_id')
+          .integer("user_id")
           .unsigned()
           .notNullable()
-          .references('id')
-          .inTable('users')
-          .onUpdate('CASCADE')
-          .onDelete('CASCADE');
+          .references("id")
+          .inTable("users")
+          .onUpdate("CASCADE")
+          .onDelete("RESTRICT");
         tbl
-          .integer('auction_id')
+          .integer("auction_id")
           .unsigned()
           .notNullable()
           .references("id")
@@ -49,24 +49,24 @@ exports.up = function (knex) {
         tbl.datetime("bid_time").defaultTo(knex.fn.now()).notNullable();
       })
       //watching table
-      .createTable('watching', tbl => {
-        tbl.increments('id');
+      .createTable("watching", (tbl) => {
+        tbl.increments();
         tbl
-          .integer('user_id')
+          .integer("user_id")
           .unsigned()
           .notNullable()
-          .references('id')
-          .inTable('users')
-          .onUpdate('CASCADE')
-          .onDelete('CASCADE');
+          .references("id")
+          .inTable("users")
+          .onUpdate("CASCADE")
+          .onDelete("RESTRICT");
         tbl
-          .integer('auction_id')
+          .integer("auction_id")
           .unsigned()
           .notNullable()
-          .references('id')
-          .inTable('auctions')
-          .onUpdate('CASCADE')
-          .onDelete('CASCADE');
+          .references("id")
+          .inTable("auctions")
+          .onUpdate("CASCADE")
+          .onDelete("RESTRICT");
       })
   );
 };
