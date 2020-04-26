@@ -4,7 +4,7 @@ exports.up = function (knex) {
       //users table
       .createTable("users", (tbl) => {
         tbl.increments();
-        tbl.text("username", 128).unique().notNullable();
+        tbl.text("username", 128).unique().notNullable().index();
         tbl.text("email").notNullable();
         tbl.text("password").notNullable();
         tbl.text("role").defaultTo("bidder").notNullable();
@@ -12,8 +12,8 @@ exports.up = function (knex) {
       //auctions table
       .createTable("auctions", (tbl) => {
         tbl.increments();
-        tbl.text("name").notNullable();
-        tbl.text("description");
+        tbl.text("name").notNullable().index();
+        tbl.text("description").index();
         tbl
           .integer("user_id")
           .unsigned()
@@ -73,8 +73,8 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
   return knex.schema
-    .dropTableIfExists("users")
-    .dropTableIfExists("auctions")
+    .dropTableIfExists("watching")
     .dropTableIfExists("bids")
-    .dropTableIfExists("watching");
+    .dropTableIfExists("auctions")
+    .dropTableIfExists("users");
 };
