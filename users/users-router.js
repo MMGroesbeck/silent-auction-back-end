@@ -11,7 +11,7 @@ router.post("/register", (req, res) => {
     const rounds = process.env.HASH_ROUNDS || 8;
     const hash = bcrypt.hashSync(user.password, rounds);
     user.password = hash;
-
+    // Need to check if email exist and who belongs to....
     Users.add(user)
         .then(saved => {
             res.status(201).json(saved);
