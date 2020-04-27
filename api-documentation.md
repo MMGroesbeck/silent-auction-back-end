@@ -1,5 +1,4 @@
 # endpoints
-
 ## /api/users
 - POST /api/users/register
 - - Requires username: string, email: string, password: string, role:string = "bidder" or "seller"
@@ -46,7 +45,6 @@
 - - POST request requires auction_id and bid_amount
 - - Bid is accepted only if bid_amount is higher than the current high bid for the auction with id auction_id
 - - Returns status 201 with accepted bid, status 400 if new bid is too low.
-
 ## /api/watching
 - GET /api/watching
 - - REQUIRES TOKEN
