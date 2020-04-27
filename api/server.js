@@ -4,7 +4,7 @@ const helmet = require('helmet');
 
 const authenticator = require("./authenticator.js");
 const usersRouter = require("../users/users-router.js");
-const biddersRouter = require("../bidders/bidders-model.js");
+const biddersRouter = require("../bidders/bidders-router.js");
 
 const server = express();
 
