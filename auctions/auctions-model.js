@@ -3,7 +3,17 @@ const jwt = require('jsonwebtoken');
 const secrets = require('../api/secrets');
 
 module.exports = {
-    getLatest
+    getLatest,
+    findBy
+}
+
+function findBy(filter) {
+    if(filter){
+        return db("auctions")
+            .where(filter);
+    } else {
+        return db("auctions");
+    }
 }
 
 function getLatest(id) { //takes integer auction id as parameter
