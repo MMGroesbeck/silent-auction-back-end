@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
     if (token) {
         jwt.verify(token, secret, (error, decodedToken) => {
             if(error) {
-                res.status(401).json({ massage: "error"});
+                res.status(401).json({ message: "error"});
             } else {
                 req.decodedToken = decodedToken;
                 grab = decodedToken;
