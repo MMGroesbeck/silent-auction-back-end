@@ -5,7 +5,10 @@ const secrets = require('../api/secrets');
 module.exports = {
     getLatest,
     findBy,
-    bidsNoNames
+    bidsNoNames,
+    addAuction,
+    updateAuction,
+    deleteAuction
 }
 
 function findBy(filter) {
@@ -27,4 +30,22 @@ function getLatest(id) { //takes integer auction id as parameter
     return db("bids")
         .where({auction_id: id})
         .max("bid_amount");
+}
+
+async function addAuction(auction) {
+    const [id] = await db("auctions").insert(auction, "id");
+    return findBy({id});
+}
+
+async function updateAuction(auction) {
+    const [id] = await db("auctions")
+        .where("id", auction.id)
+        .update(auction);
+    return findBy({id});
+}
+
+function deleteAuction(id) {
+    return db("auctions")
+        .where("id", id)
+        .del();
 }
