@@ -1,4 +1,5 @@
 # endpoints
+
 ## /api/users
 - POST /api/users/register
 - - Requires username: string, email: string, password: string, role:string = "bidder" or "seller"
@@ -8,6 +9,19 @@
 - - Requires {user, JSON web token as "token"}
 - - On successful login, returns token as "token", success message as "message".
 - - If unable to validate username/password combo, returns status 401.
+
+## /api/auctions
+- GET /api/auctions
+- - Returns array of all auctions.
+- GET /api/auctions/:id
+- - Returns auction with id = :id
+- GET /api/auctions/seller
+- - REQUIRES TOKEN
+- - Returns array of auctions where logged-in user is seller
+- GET /api/auctions/:id/bids
+- - REQUIRES TOKEN
+- - Returns array of bids (no username) for auction with id = :id only if logged-in user is seller.
+
 ## /api/bidders
 - GET /api/bidders/:id
 - - REQUIRES TOKEN
@@ -21,6 +35,7 @@
 - - POST request requires auction_id and bid_amount
 - - Bid is accepted only if bid_amount is higher than the current high bid for the auction with id auction_id
 - - Returns status 201 with accepted bid, status 400 if new bid is too low.
+
 ## /api/watching
 - GET /api/watching
 - - REQUIRES TOKEN

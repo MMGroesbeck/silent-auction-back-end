@@ -4,7 +4,8 @@ const secrets = require('../api/secrets');
 
 module.exports = {
     getLatest,
-    findBy
+    findBy,
+    bidsNoNames
 }
 
 function findBy(filter) {
@@ -14,6 +15,12 @@ function findBy(filter) {
     } else {
         return db("auctions");
     }
+}
+
+function bidsNoNames(id) {
+    return db("bids")
+        .select("id", "bid_amount", "bid_time")
+        .where({auction_id: id});
 }
 
 function getLatest(id) { //takes integer auction id as parameter
