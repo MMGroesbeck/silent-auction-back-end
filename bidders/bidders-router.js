@@ -5,7 +5,9 @@ const secrets = require('../api/secrets');
 
 const Bidders = require("./bidders-model");
 const Users = require("../users/users-model");
+
 const Auctions = require("../auctions/auctions-model"); 
+
 const generateToken = require("../api/token-gen");
 
 //endpoints for /api/bidders
