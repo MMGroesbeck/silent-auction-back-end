@@ -15,7 +15,8 @@ router.post("/register", (req, res) => {
     // Need to check if email exist and who belongs to....
     Users.add(user)
         .then(saved => {
-            res.status(201).json(saved);
+            const token = generateToken.generateToken(saved);
+            res.status(201).json(saved, token);
         })
         .catch(error => {
             console.log(error);
