@@ -24,7 +24,7 @@ exports.up = function (knex) {
           .onDelete("RESTRICT");
         tbl.text("image_url");
         tbl.datetime("start_datetime").defaultTo(knex.fn.now()).notNullable();
-        tbl.datetime("end_datetime").notNullable(); /////////////
+        tbl.datetime("end_datetime").notNullable(); 
       })
       //bids table
       .createTable("bids", (tbl) => {
