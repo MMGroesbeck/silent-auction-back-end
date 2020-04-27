@@ -10,26 +10,15 @@ module.exports = {
 };
 
 function find(token) {
-    var grab;
-    jwt.verify(token, secrets.jwtSecret, (error, decodedToken) => {
-        grab = decodedToken;
-    })
-    console.log(grab);
-
     return db("watching")
         .select("id", "auction_id")
-        .where("user_id", grab.userId)
-    
+        .where("user_id", token.userId) 
 }
 
 function add(token, id) {
-    var grab;
-    jwt.verify(token, secrets.jwtSecret, (error, decodedToken) => {
-        grab = decodedToken;
-    })
-    //id, grab.id as user_id and id as auction_id
+    //id, token.id as user_id and id as auction_id
     let watchingData = {
-        user_id: grab.userId,
+        user_id: token.userId,
         auction_id: id
     }
     return db("watching")
@@ -45,15 +34,15 @@ function findById(id) {
       .first();
 }
 
-function remove(token, id) { //need to fix this one
-    var grab;
-    jwt.verify(token, secrets.jwtSecret, (error, decodedToken) => {
-        grab = decodedToken;
+function remove(user_id, auction_id) {
+    console.log({
+        auction_id: auction_id,
+        user_id: user_id
     })
-	return findById(id).then((watch) => {
-		return db("watching")
-			.where({ id })
-			.del()
-			.then(() => watch);
-	});
+	return db("watching")
+        .where({
+            auction_id: auction_id,
+            user_id: user_id
+        })
+        .del();
 }
