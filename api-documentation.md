@@ -2,10 +2,10 @@
 ## /api/users
 - POST /api/users/register
 - - Requires username: string, email: string, password: string, role:string = "bidder" or "seller"
-- - Returns new user as "saved", JSON web token as "token"
+- - Returns {user, JSON web token as "token"}
 - - Each email can only be associated with one "bidder" and one "seller"; will return error if user of specified role already has provided email.
 - POST /api/users/login
-- - Requires username: string, password: string
+- - Requires {user, JSON web token as "token"}
 - - On successful login, returns token as "token", success message as "message".
 - - If unable to validate username/password combo, returns status 401.
 ## /api/bidders
