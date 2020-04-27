@@ -1,6 +1,6 @@
 // *GET /api/watching/				list of auctions logged-in user has saved
 // *POST /api/watching/:id			add auction to watchlist
-// *DELETE /api/watching/:id			remove auction from watchlist
+// *DELETE /api/watching/:id		remove auction from watchlist
 
 const express = require('express');
 
@@ -9,7 +9,7 @@ const Watching = require('./watching-model.js');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-    Watching.find(req.headers.authorization)
+    Watching.find(req.decodedToken)
         .then(data => {
             res.json(data);
         })
@@ -20,7 +20,7 @@ router.get('/', (req, res) => {
 
 router.post('/:id', (req, res) => {
     const { id } = req.params;
-    Watching.add(req.headers.authorization, id)
+    Watching.add(req.decodedToken, id)
         .then(watch =>{
             res.status(201).json(watch);
         })
@@ -32,7 +32,7 @@ router.post('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     const { id } = req.params;
   
-    Watching.remove(id)
+    Watching.remove(req.decodedToken.userId, id)
         .then(deleted => {
             if (deleted) {
                 res.json({ removed: deleted });
