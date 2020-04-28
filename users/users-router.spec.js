@@ -2,7 +2,7 @@ const request = require("supertest");
 const server = require("../api/server");
 const db = require("../data/dbConfig");
 
-describe("testing users endpoints: login and register", () => {
+describe("testing users endpoints", () => {
     afterAll(async () => {
         await db("users").truncate();
     });
@@ -47,11 +47,11 @@ describe("testing users endpoints: login and register", () => {
             });
     });
 
-    test("request success with a  token", () => {
+    describe("request success with a  token", () => {
         console.log("token inside request", token)
         return request(server)
             .post("/api/auctions")
-            .set('Authorization', `Bearer ${token}`)
+            .set('Authorization', token )
             .send({
                 name: "name",
                 description: "description",
@@ -63,7 +63,7 @@ describe("testing users endpoints: login and register", () => {
                 expect(res.status).toBe(201);
             });
     });
-//register and login
+// //register and login
     test("should return 201 on success", () => {
         return request(server)
             .post("/api/users/register")
