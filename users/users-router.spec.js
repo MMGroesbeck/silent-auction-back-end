@@ -6,7 +6,64 @@ describe("testing users endpoints: login and register", () => {
     afterAll(async () => {
         await db("users").truncate();
     });
+// getting token
+    let token;
 
+    beforeAll((done) => {
+        request(server)
+            .post("/api/users/register")
+            .send({ password: "katya", username: "katya", email: "katya@gmail.com", role: "seller" })
+            .end((err, response) => {
+                done();
+            });
+    });
+
+    beforeAll((done) => {
+      request(server)
+        .post('/api/users/login')
+        .send({
+          username: "katya",
+          password: "katya",
+        })
+        .end((err, response) => {
+          token = response.body.token; // save the token!
+          console.log("token when created", token);
+          done();
+        });
+    });
+//api/auctions
+    test("request denied without token", () => {
+        return request(server)
+            .post("/api/auctions")
+            .send({
+                name: "name",
+                description: "description",
+                user_id: "1",
+                image_url: "http/link/to/img",
+                end_datetime: "2020-10-10 09:17:21"
+            })
+            .then((res) => {
+                expect(res.status).toBe(400);
+            });
+    });
+
+    test("request success with a  token", () => {
+        console.log("token inside request", token)
+        return request(server)
+            .post("/api/auctions")
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                name: "name",
+                description: "description",
+                user_id: 1,
+                image_url: "http/link/to/img",
+                end_datetime: "2020-10-10 09:17:21"
+            })
+            .then((res) => {
+                expect(res.status).toBe(201);
+            });
+    });
+//register and login
     test("should return 201 on success", () => {
         return request(server)
             .post("/api/users/register")
