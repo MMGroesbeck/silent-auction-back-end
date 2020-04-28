@@ -23,6 +23,7 @@
 - GET /api/auctions/:id/bids
 - - REQUIRES TOKEN
 - - Returns array of bids (no username) for auction with id = :id only if logged-in user is seller.
+- - Also returns info for winning bidder if auction is completed.
 - POST /api/auctions
 - - REQUIRES TOKEN
 - - Requires name, description, image_url, start_datetime, end_datetime.

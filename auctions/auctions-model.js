@@ -8,7 +8,8 @@ module.exports = {
     bidsNoNames,
     addAuction,
     updateAuction,
-    deleteAuction
+    deleteAuction,
+    getWinner
 }
 
 function findBy(filter) {
@@ -30,6 +31,14 @@ function getLatest(id) { //takes integer auction id as parameter
     return db("bids")
         .where({auction_id: id})
         .max("bid_amount");
+}
+
+function getWinner(id) {
+    return db
+        .select("u.username", "u.email", "b.bid_amount", "b.bid_time")
+        .from("bids as b")
+        .join("users as u", "u.id", "b.user_id")
+        .where({ auction_id: id });
 }
 
 async function addAuction(auction) {
