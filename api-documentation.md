@@ -34,6 +34,7 @@
 - DELETE /api/auctions/:id
 - - REQUIRES TOKEN
 - - Sets auction status to "canceled" -- does not delete record of auction.
+
 ## /api/bidders
 - GET /api/bidders/:id
 - - REQUIRES TOKEN
@@ -44,9 +45,11 @@
 - - Returns list of bids for logged-in bidder with user id = :id
 - POST /api/bidders/:id/bids
 - - REQUIRES TOKEN
+- - user id :id must match logged-in user.
 - - POST request requires auction_id and bid_amount
 - - Bid is accepted only if bid_amount is higher than the current high bid for the auction with id auction_id
 - - Returns status 201 with accepted bid, status 400 if new bid is too low.
+
 ## /api/watching
 - GET /api/watching
 - - REQUIRES TOKEN

@@ -51,29 +51,35 @@ router.post("/:id/bids", (req, res) => {
     auction_id: req.body.auction_id,
     bid_amount: req.body.bid_amount,
   };
-  Auctions.findBy({ id: newBid.auction_id }).then((auct) => {
-    if (auct[0].status == "active") {
-      Auctions.getLatest(newBid.auction_id)
-        .then((latest) => {
-          if (newBid.bid_amount > latest.bid_amount) {
-            Bidders.addBid(newBid)
-              .then((id) => {
-                res.status(201).json({ message: "Bid accepted." });
-              })
-              .catch((err) => {
-                res.status(500).json({ errorMessage: err.message });
-              });
-          } else {
-            res.status(400).json({ message: "New bid must be higher." });
-          }
-        })
-        .catch((err) => {
-          res.status(500).json({ errorMessage: err.message });
-        });
-    } else {
-      res.status(400).json({ message: "Auction is not active." });
-    }
-  });
+  if (req.params.id == req.decodedToken.userId) {
+    Auctions.findBy({ id: newBid.auction_id }).then((auct) => {
+      if (auct[0].status == "active") {
+        Auctions.getLatest(newBid.auction_id)
+          .then((latest) => {
+            if (newBid.bid_amount > latest.bid_amount) {
+              Bidders.addBid(newBid)
+                .then((id) => {
+                  res.status(201).json({ message: "Bid accepted." });
+                })
+                .catch((err) => {
+                  res.status(500).json({ errorMessage: err.message });
+                });
+            } else {
+              res.status(400).json({ message: "New bid must be higher." });
+            }
+          })
+          .catch((err) => {
+            res.status(500).json({ errorMessage: err.message });
+          });
+      } else {
+        res.status(400).json({ message: "Auction is not active." });
+      }
+    });
+  } else {
+    res
+      .status(400)
+      .json({ message: "Bidding user does not match logged-in user." });
+  }
 });
 
 module.exports = router;
