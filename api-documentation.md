@@ -66,7 +66,7 @@
 - users:
 - - { id: integer, username: string, email: string, role: string = "bidder" or "seller" }
 - auctions:
-- - { id: integer, name: string, description: string, user_id: integer = user id of seller, image_url: string, start_datetime: timestamp, end_datetime: timestamp, status: string = "active", "completed", "canceled" }
+- - { id: integer, name: string, description: string, user_id: integer = user id of seller, image_url: string, start_datetime: timestamp (defaults to now), end_datetime: timestamp, status: string = "active", "completed", "canceled", reserve: defaults to 0 }
 - bids:
 - - { id: integer, user_id: integer = id of bidder, auction_id: integer = id of auction, bid_amount: decimal, bid_time: timestamp }
 - watching:

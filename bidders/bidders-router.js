@@ -54,7 +54,8 @@ router.post("/:id/bids", (req, res) => {
   if (req.params.id == req.decodedToken.userId) {
     Auctions.findBy({ id: newBid.auction_id }).then((auct) => {
       if (auct[0].status == "active") {
-        Auctions.getLatest(newBid.auction_id)
+        if (newBid.bid_amount > auct[0].reserve) {
+          Auctions.getLatest(newBid.auction_id)
           .then((latest) => {
             if (newBid.bid_amount > latest.bid_amount) {
               Bidders.addBid(newBid)
@@ -65,12 +66,16 @@ router.post("/:id/bids", (req, res) => {
                   res.status(500).json({ errorMessage: err.message });
                 });
             } else {
-              res.status(400).json({ message: "New bid must be higher." });
+              res.status(400).json({ message: "New bid must be higher than current high bid." });
             }
           })
           .catch((err) => {
             res.status(500).json({ errorMessage: err.message });
           });
+        } else {
+          res.status(400).json({ message: "New bid must be higher than reserve." });
+        }
+        
       } else {
         res.status(400).json({ message: "Auction is not active." });
       }
