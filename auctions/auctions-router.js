@@ -39,7 +39,7 @@ router.get("/:id", (req, res) => {
 });
 
 router.get("/seller", authenticator, (req, res) => {
-    Auctions.findBy({user_id: req.decodedToken.id})
+    Auctions.findBy({user_id: req.decodedToken.userId})
     .then((auct) => {
       res.status(200).json(auct);
     })
@@ -61,7 +61,6 @@ router.get("/", (req, res) => {
   });
 
   router.post("/", authenticator, sellerOnly, (req, res) => {
-      console.log(req.decodedToken);
       const newAuction = {
           name: req.body.name,
           description: req.body.description,
