@@ -11,7 +11,7 @@ router.get("/:id/bids", authenticator, (req, res) => {
             if (auct.length == 0) {
                 res.status(404).json({ message: "Auction not found." });
             } else {
-                if (auct[0].user_id == req.decodedToken.id){
+                if (auct[0].user_id == req.decodedToken.userId){
                     Auctions.bidsNoNames(req.params.id)
                         .then(bids => {
                             res.status(200).json(bids);
@@ -61,13 +61,14 @@ router.get("/", (req, res) => {
   });
 
   router.post("/", authenticator, sellerOnly, (req, res) => {
+      console.log(req.decodedToken);
       const newAuction = {
           name: req.body.name,
           description: req.body.description,
           image_url: req.body.image_url,
           start_datetime: req.body.start_datetime,
           end_datetime: req.body.end_datetime,
-          user_id: req.decodedToken.id
+          user_id: req.decodedToken.userId
       };
       Auctions.addAuction(newAuction)
         .then(auct => {
@@ -82,8 +83,9 @@ router.get("/", (req, res) => {
   router.put("/:id", authenticator, (req, res) => {
       Auctions.findBy({ id: req.params.id })
         .then(auct => {
-            if(auct.id = req.decodedToken.id){
-                Auctions.updateAuction(req.body)
+            if(auct.user_id = req.decodedToken.userId){
+                console.log (req.body);
+                Auctions.updateAuction(req.body, req.params.id)
                     .then(resp => {
                         res.status(200).json({ message: "Updated.", resp});
                     })
@@ -100,11 +102,11 @@ router.get("/", (req, res) => {
   router.delete("/:id", authenticator, (req, res) => {
     Auctions.findBy({ id: req.params.id })
         .then(auct => {
-            if(auct.id = req.decodedToken.id){
+            if(auct.user_id = req.decodedToken.userId){
                 Auctions.deleteAuction(req.params.id)
                     .then(count => {
                         if (count) {
-                            res.status(200).json({ message: "Deleted." });
+                            res.status(200).json({ message: "Canceled." });
                         } else {
                             res.status(404).json({ message: "Auction not found." });
                         }

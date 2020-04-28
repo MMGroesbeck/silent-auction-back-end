@@ -30,8 +30,7 @@
 - - Only updates if auction seller is logged-in user.
 - DELETE /api/auctions/:id
 - - REQUIRES TOKEN
-- - Deletes auction with id = :id only if logged-in user is auction seller.
-
+- - Sets auction status to "canceled" -- does not delete record of auction.
 ## /api/bidders
 - GET /api/bidders/:id
 - - REQUIRES TOKEN
@@ -60,7 +59,7 @@
 - users:
 - - { id: integer, username: string, email: string, role: string = "bidder" or "seller" }
 - auctions:
-- - { id: integer, name: string, description: string, user_id: integer = user id of seller, image_url: string, start_datetime: timestamp, end_datetime: timestamp }
+- - { id: integer, name: string, description: string, user_id: integer = user id of seller, image_url: string, start_datetime: timestamp, end_datetime: timestamp, status: string = "active", "completed", "canceled" }
 - bids:
 - - { id: integer, user_id: integer = id of bidder, auction_id: integer = id of auction, bid_amount: decimal, bid_time: timestamp }
 - watching:

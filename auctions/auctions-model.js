@@ -37,15 +37,19 @@ async function addAuction(auction) {
     return findBy({id});
 }
 
-async function updateAuction(auction) {
-    const [id] = await db("auctions")
-        .where("id", auction.id)
+async function updateAuction(auction, auctionId) {
+    const foo = await db("auctions")
+        .where("id", auctionId)
         .update(auction);
-    return findBy({id});
+    return findBy({id: auctionId});
 }
 
-function deleteAuction(id) {
-    return db("auctions")
+async function deleteAuction(id) {
+    // return db("auctions")
+    //     .where("id", id)
+    //     .del();
+    const foo = await db("auctions")
         .where("id", id)
-        .del();
+        .update({status: "canceled"});
+    return findBy({id: id});
 }
