@@ -1,3 +1,6 @@
+# root api directory
+- https://silent-auctions.herokuapp.com/
+
 # endpoints
 ## /api/users
 - POST /api/users/register
