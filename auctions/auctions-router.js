@@ -54,7 +54,10 @@ router.get("/:id", (req, res) => {
     .then((auct) => {
       TimeCheck.setCompleted(req.params.id)
         .then(resp => {
-          res.status(200).json(auct);
+          Auctions.findBy({ id: req.params.id })
+            .then((auc) => {
+              res.status(200).json(auc);
+            })
         })
         .catch((error) => {
           console.log(error);
