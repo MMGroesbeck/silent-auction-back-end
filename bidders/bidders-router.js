@@ -5,6 +5,7 @@ const secrets = require("../api/secrets");
 
 const Bidders = require("./bidders-model");
 const Users = require("../users/users-model");
+const TimeCheck = require("../api/compare-timestamps.js");
 
 const Auctions = require("../auctions/auctions-model");
 
@@ -52,33 +53,40 @@ router.post("/:id/bids", (req, res) => {
     bid_amount: req.body.bid_amount,
   };
   if (req.params.id == req.decodedToken.userId) {
-    Auctions.findBy({ id: newBid.auction_id }).then((auct) => {
-      if (auct[0].status == "active") {
-        if (newBid.bid_amount > auct[0].reserve) {
-          Auctions.getLatest(newBid.auction_id)
-          .then((latest) => {
-            if (newBid.bid_amount > latest.bid_amount) {
-              Bidders.addBid(newBid)
-                .then((id) => {
-                  res.status(201).json({ message: "Bid accepted." });
-                })
-                .catch((err) => {
-                  res.status(500).json({ errorMessage: err.message });
-                });
-            } else {
-              res.status(400).json({ message: "New bid must be higher than current high bid." });
-            }
-          })
-          .catch((err) => {
-            res.status(500).json({ errorMessage: err.message });
-          });
+    TimeCheck.setCompleted(newBid.auction_id).then((resp) => {
+      Auctions.findBy({ id: newBid.auction_id }).then((auct) => {
+        if (auct[0].status == "active") {
+          if (newBid.bid_amount > auct[0].reserve) {
+            Auctions.getLatest(newBid.auction_id)
+              .then((latest) => {
+                if (newBid.bid_amount > latest.bid_amount) {
+                  Bidders.addBid(newBid)
+                    .then((id) => {
+                      res.status(201).json({ message: "Bid accepted." });
+                    })
+                    .catch((err) => {
+                      res.status(500).json({ errorMessage: err.message });
+                    });
+                } else {
+                  res
+                    .status(400)
+                    .json({
+                      message: "New bid must be higher than current high bid.",
+                    });
+                }
+              })
+              .catch((err) => {
+                res.status(500).json({ errorMessage: err.message });
+              });
+          } else {
+            res
+              .status(400)
+              .json({ message: "New bid must be higher than reserve." });
+          }
         } else {
-          res.status(400).json({ message: "New bid must be higher than reserve." });
+          res.status(400).json({ message: "Auction is not active." });
         }
-        
-      } else {
-        res.status(400).json({ message: "Auction is not active." });
-      }
+      });
     });
   } else {
     res
