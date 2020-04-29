@@ -59,10 +59,12 @@ router.post("/:id/bids", (req, res) => {
           if (newBid.bid_amount > auct[0].reserve) {
             Auctions.getLatest(newBid.auction_id)
               .then((latest) => {
-                if (newBid.bid_amount > latest.bid_amount) {
+                console.log("new: ", newBid.bid_amount);
+                console.log("high: ", latest.bid_amount);
+                if (!latest.bid_amount || newBid.bid_amount > latest.bid_amount) {
                   Bidders.addBid(newBid)
                     .then((id) => {
-                      res.status(201).json({ message: "Bid accepted." });
+                      res.status(200).json({ message: "Bid accepted." });
                     })
                     .catch((err) => {
                       res.status(500).json({ errorMessage: err.message });

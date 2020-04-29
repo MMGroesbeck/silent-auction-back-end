@@ -21,7 +21,7 @@ function getBids(id) { // takes integer user id as param
         .from("bids as b")
         .join("users as u", "u.id", "b.user_id")
         .join("auctions as a", "a.id", "b.auction_id")
-        .where({ user_id: id })
+        .where("b.user_id", id)
         .orderBy("b.bid_time");
 };
 
