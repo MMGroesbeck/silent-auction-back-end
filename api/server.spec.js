@@ -294,20 +294,19 @@ describe("POST /api/bidders/:id/bids", () => {
     });
 })
 
-// describe("POST /api/bidders/:id/bids", () => {
-//     test("bidders can bid on existing auction", async () => {
-//         const response = await request(server)
-//             .post("/api/bidders/2/bids")
-//             .set("authorization", bidderToken)
-//             .send({
-//                 auction_id: 2,
-//                 bid_amount: 100
-//             });
-//             console.log(response.body.message);
-//             expect(response.statusCode).toBe(200);
-//             //recieving "New bid must be higher than current high bid." 
-//     });
-// })
+describe("POST /api/bidders/:id/bids", () => {
+    test("bidders can bid on existing auction", async () => {
+        const response = await request(server)
+            .post("/api/bidders/2/bids")
+            .set("authorization", bidderToken)
+            .send({
+                auction_id: 2,
+                bid_amount: 100
+            });
+            console.log("BID: ", response.body.message);
+            expect(response.statusCode).toBe(200);
+    });
+})
 
 describe("POST /api/bidders/:id/bids", () => {
     test("bidders can't bid if bidding user does not match logged-in user", async () => {
@@ -342,20 +341,21 @@ describe("GET /api/bidders/:id", () => {
     });
 });
 
-// describe("GET /api/bidders/:id/bids", () => {
-//     test("returns list of bids for logged-in bidder", async () => {
-//         const response = await request(server)
-//             .get("/api/bidders/2/bids")
-//             .set("authorization", bidderToken);
-//         expect(response.body).toBe([]);
-//         /*errorMessage": "select `b`.`id` as `bid_id`, `b`.`user_id` as `user_id`, 
-//         `b`.`auction_id` as `auction_id`, `b`.`bid_amount`, `b`.`bid_time`, `u`.
-//         `username`, `a`.`name` from `bids` 
-//         as `b` inner join `users` as `u` on `u`.`id` = `b`.`user_id` inner join 
-//         `auctions` as `a` on `a`.`id` = `b`.`auction_id` where `user_id` = '2' order 
-//         by `b`.`bid_time` asc - SQLITE_ERROR: ambiguous column name: user_id */
-//     });
-// });
+describe("GET /api/bidders/:id/bids", () => {
+    test("returns list of bids for logged-in bidder", async () => {
+        const response = await request(server)
+            .get("/api/bidders/2/bids")
+            .set("authorization", bidderToken);
+        expect(response.body.length).toBe(1);
+        /*errorMessage": "select `b`.`id` as `bid_id`, `b`.`user_id` as `user_id`, 
+        `b`.`auction_id` as `auction_id`, `b`.`bid_amount`, `b`.`bid_time`, `u`.
+        `username`, `a`.`name` from `bids` 
+        as `b` inner join `users` as `u` on `u`.`id` = `b`.`user_id` inner join 
+        `auctions` as `a` on `a`.`id` = `b`.`auction_id` where `user_id` = '2' order 
+        by `b`.`bid_time` asc - SQLITE_ERROR: ambiguous column name: user_id */
+        /* Fixed by correcting query for getBids function in bidders-model.js */
+    });
+});
 
 // =============================================================================== //
 
