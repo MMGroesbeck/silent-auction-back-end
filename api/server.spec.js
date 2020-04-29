@@ -116,6 +116,87 @@ describe("GET /api/auctions/:id", () => {
     });
 });
 
+describe("GET /api/auctions/seller", () => {
+    test("returns array of auctions where logged-in user is seller", async () => {
+      const response = await request(server)
+        .get("/api/auctions/seller")
+        .set("authorization", token);
+      expect(response.statusCode).toBe(200);
+    });
+});
+
+describe("GET /api/auctions/:id/bids", () => {
+    test("returns array of bids", async () => {
+      const response = await request(server)
+        .get("/api/auctions/1/bids")
+        .set("authorization", token);
+      expect(response.statusCode).toBe(200);
+    });
+});
+
+describe("GET /api/auctions/:id/bids", () => {
+    test("returns 404 if auction doesn't exist", async () => {
+      const response = await request(server)
+        .get("/api/auctions/5/bids")
+        .set("authorization", token);
+      expect(response.statusCode).toBe(404);
+    });
+});
+
+describe("PUT /api/auctions/id", () => {
+    test("changing data for auction", async () => {
+        const response = await request(server)
+            .put("/api/auctions/1")
+            .set("authorization", token)
+            .send({
+                name: "name",
+                description: "description",
+                user_id: "1",
+                image_url: "http/link/to/img",
+                end_datetime: "2020-10-12 09:17:21",
+                start_datetime: "2019-10-10 09:17:21",
+                status: "active",
+                reserve: 0
+            });
+            expect(response.statusCode).toBe(200);
+    });
+})
+
+describe("PUT /api/auctions/id", () => {
+    test("changing request denied without proper autherization", async () => {
+        const response = await request(server)
+            .put("/api/auctions/1")
+            .send({
+                name: "newName",
+                description: "description",
+                user_id: "1",
+                image_url: "http/link/to/img",
+                end_datetime: "2020-10-12 09:17:21",
+                start_datetime: "2019-10-10 09:17:21",
+                status: "active",
+                reserve: 0
+            });
+            expect(response.statusCode).toBe(400);
+    });
+})
+
+describe("DELETE /api/auctions/id", () => {
+    test("Sets the property 'status' to 'canceled'", async () => {
+        const response = await request(server)
+            .delete("/api/auctions/1")
+            .set("authorization", token);
+            expect(response.body.message).toBe("Canceled.");
+    });
+})
+
+describe("DELETE /api/auctions/id", () => {
+    test("Rejects request without authorization", async () => {
+        const response = await request(server)
+            .delete("/api/auctions/1");
+            expect(response.statusCode).toBe(400);;
+    });
+})
+
 // =============================================================================== //
 
 // ======================== testing register and login =========================== //
