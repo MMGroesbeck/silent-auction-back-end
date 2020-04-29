@@ -1,6 +1,7 @@
 const router = require("express").Router();
 
 const Auctions = require("./auctions-model.js");
+const TimeCheck = require("../api/compare-timestamps.js");
 
 const authenticator = require("../api/authenticator.js");
 const sellerOnly = require("../api/seller-only.js");
@@ -51,7 +52,14 @@ router.get("/:id/bids", authenticator, (req, res) => {
 router.get("/:id", (req, res) => {
   Auctions.findBy({ id: req.params.id })
     .then((auct) => {
-      res.status(200).json(auct);
+      TimeCheck.setCompleted(req.params.id)
+        .then(resp => {
+          res.status(200).json(auct);
+        })
+        .catch((error) => {
+          console.log(error);
+          res.status(500).json({ errorMessage: error.message });
+        });
     })
     .catch((error) => {
       console.log(error);
@@ -60,7 +68,9 @@ router.get("/:id", (req, res) => {
 });
 
 router.get("/seller", authenticator, (req, res) => {
-  Auctions.findBy({ user_id: req.decodedToken.userId })
+  TimeCheck.setCompletedAll()
+  .then(resp => {
+    Auctions.findBy({ user_id: req.decodedToken.userId })
     .then((auct) => {
       res.status(200).json(auct);
     })
@@ -68,10 +78,17 @@ router.get("/seller", authenticator, (req, res) => {
       console.log(error);
       res.status(500).json({ errorMessage: error.message });
     });
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500).json({ errorMessage: error.message });
+  });
 });
 
 router.get("/", (req, res) => {
-  Auctions.findBy()
+  TimeCheck.setCompletedAll()
+  .then(resp => {
+    Auctions.findBy()
     .then((auct) => {
       res.status(200).json(auct);
     })
@@ -79,6 +96,11 @@ router.get("/", (req, res) => {
       console.log(error);
       res.status(500).json({ errorMessage: error.message });
     });
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500).json({ errorMessage: error.message });
+  });
 });
 
 router.post("/", authenticator, sellerOnly, (req, res) => {
