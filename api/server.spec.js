@@ -34,7 +34,7 @@ beforeAll((done) => {
       password: "katya",
     })
     .end((err, response) => {
-      token = response.body.token; // save the token!
+      token = response.body.token; 
       console.log("token when created", token);
       done();
     });
@@ -83,6 +83,25 @@ describe("POST /api/auctions", () => {
             .send({
                 name: "name",
                 description: "description",
+                user_id: "1",
+                image_url: "http/link/to/img",
+                end_datetime: "2020-10-10 09:17:21",
+                start_datetime: "2019-10-10 09:17:21",
+                status: "active",
+                reserve: 0
+            });
+            expect(response.statusCode).toBe(201);
+    });
+})
+
+describe("POST /api/auctions", () => {
+    test("creating another auction for future tests", async () => {
+        const response = await request(server)
+            .post("/api/auctions")
+            .set("authorization", token)
+            .send({
+                name: "testAuction",
+                description: "descriptiondescription",
                 user_id: "1",
                 image_url: "http/link/to/img",
                 end_datetime: "2020-10-10 09:17:21",
@@ -194,6 +213,186 @@ describe("DELETE /api/auctions/id", () => {
         const response = await request(server)
             .delete("/api/auctions/1");
             expect(response.statusCode).toBe(400);;
+    });
+})
+
+// =============================================================================== //
+
+
+// ========================== getting token for bidder =========================== //
+
+let bidderToken;
+
+beforeAll((done) => {
+    request(server)
+        .post("/api/users/register")
+        .send({ password: "toos", username: "toos", email: "toos@gmail.com", role: "bidder" })
+        .end((err, response) => {
+            done();
+        });
+});
+
+beforeAll((done) => {
+  request(server)
+    .post('/api/users/login')
+    .send({
+      username: "toos",
+      password: "toos",
+    })
+    .end((err, response) => {
+        bidderToken = response.body.token;
+        done();
+    });
+});
+
+// =============================================================================== //
+
+// ================= testing auction end points for bidders ====================== //
+
+describe("POST /api/auctions", () => {
+    test("/api/auctions post rejected if user is a bidder", async () => {
+        const response = await request(server)
+            .post("/api/auctions")
+            .set("authorization", bidderToken)
+            .send({
+                name: "auctionName",
+                description: "description",
+                user_id: "2",
+                image_url: "http/link/to/img",
+                end_datetime: "2020-10-10 09:17:21",
+                start_datetime: "2019-10-10 09:17:21",
+                status: "active",
+                reserve: 0
+            });
+            expect(response.statusCode).toBe(400);
+    });
+})
+
+describe("GET /api/auctions/:id/bids", () => {
+    test("rejected if user is a bidder", async () => {
+      const response = await request(server)
+        .get("/api/auctions/1/bids")
+        .set("authorization", bidderToken);
+      expect(response.statusCode).toBe(400);
+    });
+});
+
+// =============================================================================== //
+
+// =============================== testing bidders =============================== //
+
+describe("POST /api/bidders/:id/bids", () => {
+    test("bidders can't bid on auction with canceled property", async () => {
+        const response = await request(server)
+            .post("/api/bidders/2/bids")
+            .set("authorization", bidderToken)
+            .send({
+                auction_id: 1,
+                bid_amount: 100
+            });
+            expect(response.body.message).toBe('Auction is not active.');
+    });
+})
+
+// describe("POST /api/bidders/:id/bids", () => {
+//     test("bidders can bid on existing auction", async () => {
+//         const response = await request(server)
+//             .post("/api/bidders/2/bids")
+//             .set("authorization", bidderToken)
+//             .send({
+//                 auction_id: 2,
+//                 bid_amount: 100
+//             });
+//             console.log(response.body.message);
+//             expect(response.statusCode).toBe(200);
+//             //recieving "New bid must be higher than current high bid." 
+//     });
+// })
+
+describe("POST /api/bidders/:id/bids", () => {
+    test("bidders can't bid if bidding user does not match logged-in user", async () => {
+        const response = await request(server)
+            .post("/api/bidders/1/bids")
+            .set("authorization", bidderToken)
+            .send({
+                auction_id: 2,
+                bid_amount: 100
+            });
+            expect(response.body.message).toBe('Bidding user does not match logged-in user.');
+    });
+})
+
+describe("GET /api/bidders/:id", () => {
+    test("returning information about user", async () => {
+      const response = await request(server)
+        .get("/api/bidders/1")
+        .set("authorization", bidderToken);
+      expect(response.statusCode).toBe(200)
+      expect(response.body[0].username).toBe("katya");
+    });
+});
+
+describe("GET /api/bidders/:id", () => {
+    test("returning more info like email if requested id = logged in user id", async () => {
+      const response = await request(server)
+        .get("/api/bidders/2")
+        .set("authorization", bidderToken);
+      expect(response.statusCode).toBe(200)
+      expect(response.body[0].email).toBe("toos@gmail.com");
+    });
+});
+
+// describe("GET /api/bidders/:id/bids", () => {
+//     test("returns list of bids for logged-in bidder", async () => {
+//         const response = await request(server)
+//             .get("/api/bidders/2/bids")
+//             .set("authorization", bidderToken);
+//         expect(response.body).toBe([]);
+//         /*errorMessage": "select `b`.`id` as `bid_id`, `b`.`user_id` as `user_id`, 
+//         `b`.`auction_id` as `auction_id`, `b`.`bid_amount`, `b`.`bid_time`, `u`.
+//         `username`, `a`.`name` from `bids` 
+//         as `b` inner join `users` as `u` on `u`.`id` = `b`.`user_id` inner join 
+//         `auctions` as `a` on `a`.`id` = `b`.`auction_id` where `user_id` = '2' order 
+//         by `b`.`bid_time` asc - SQLITE_ERROR: ambiguous column name: user_id */
+//     });
+// });
+
+// =============================================================================== //
+
+// ======================== testing watching functionality ======================= //
+
+describe("POST /api/watching/:id", () => {
+    test("adds auction to the watchlist", async () => {
+        const response = await request(server)
+            .post("/api/watching/2")
+            .set("authorization", bidderToken)
+            expect(response.statusCode).toBe(201)
+    });
+})
+
+describe("POST /api/watching/:id", () => {
+    test("can't add auction in a watchlist without authorization", async () => {
+        const response = await request(server)
+            .post("/api/watching/2")
+            expect(response.statusCode).toBe(400)
+    });
+})
+
+describe("GET /api/watching/", () => {
+    test("recieving watching data", async () => {
+        const response = await request(server)
+            .get("/api/watching")
+            .set("authorization", bidderToken)
+            expect(response.statusCode).toBe(200)
+    });
+})
+
+describe("DELETE /api/watching/1", () => {
+    test("deleting auction from watchlist", async () => {
+        const response = await request(server)
+            .delete("/api/watching/2")
+            .set("authorization", bidderToken)
+            expect(response.statusCode).toBe(200)
     });
 })
 
