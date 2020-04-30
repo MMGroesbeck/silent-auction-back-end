@@ -13,6 +13,22 @@ const generateToken = require("../api/token-gen");
 
 //endpoints for /api/bidders
 
+router.get("/:id/bids", (req, res) => {
+  if (req.decodedToken && req.decodedToken.userId == req.params.id) {
+    Bidders.getBids(req.params.id)
+      .then((bids) => {
+        res.status(200).json(bids);
+      })
+      .catch((error) => {
+        res.status(500).json({ errorMessage: error.message });
+      });
+  } else {
+    res
+      .status(400)
+      .json({ message: "Bid list only available for logged-in user." });
+  }
+});
+
 router.get("/:id", (req, res) => {
   let select = [];
   let filter = { id: req.params.id };
@@ -28,22 +44,6 @@ router.get("/:id", (req, res) => {
     .catch((error) => {
       res.status(500).json({ errorMessage: error.message });
     });
-});
-
-router.get("/:id/bids", (req, res) => {
-  if (req.decodedToken && req.decodedToken.userId == req.params.id) {
-    Bidders.getBids(req.params.id)
-      .then((bids) => {
-        res.status(200).json(bids);
-      })
-      .catch((error) => {
-        res.status(500).json({ errorMessage: error.message });
-      });
-  } else {
-    res
-      .status(400)
-      .json({ message: "Bid list only available for logged-in user." });
-  }
 });
 
 router.post("/:id/bids", (req, res) => {
