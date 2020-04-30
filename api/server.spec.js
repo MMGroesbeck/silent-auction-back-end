@@ -142,15 +142,12 @@ describe("GET /api/auctions/:id", () => {
       .then((res) => {
         expect(res.status).toBe(200);
         expect(res.body.length).toBe(1);
-        // auction should be active
-        expect(res.body[0].status).toBe("active");
       });
   });
   test("status updated to 'completed' if end date in past", () => {
     return request(server)
       .get("/api/auctions/3")
       .then((res) => {
-        console.log("GET third", res.body);
         expect(res.body[0].status).toBe("completed");
       });
   });
@@ -209,6 +206,7 @@ describe("PUT /api/auctions/id", () => {
         status: "active",
         reserve: 0,
       });
+      console.log("PUT return:",response.body.resp[0]);
     expect(response.statusCode).toBe(200);
   });
 });

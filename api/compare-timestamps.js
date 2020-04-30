@@ -1,4 +1,5 @@
 const db = require("../data/dbConfig");
+const Auctions = require("../auctions/auctions-model.js");
 
 module.exports = {
     setCompleted,
@@ -7,19 +8,20 @@ module.exports = {
     checkExpired
 }
 
-function setCompleted(id){
+async function setCompleted(id){
     const rightnow = new Date();
-    const comparison = (process.env.DB_ENV == "production") ? rightnow.toISOString() : Date.now();
-    return db("auctions")
+    const comparison = rightnow.toISOString();
+    const foo = await db("auctions")
         .where("id", id)
         .andWhere("status", "active")
         .andWhere("end_datetime", "<", comparison)
         .update({status: "completed"});
+    return Auctions.findBy({id: id});
 }
 
 function setCompletedArr(ids){
     const rightnow = new Date();
-    const comparison = (process.env.DB_ENV == "production") ? rightnow.toISOString() : Date.now();
+    const comparison = rightnow.toISOString();
     return db("auctions")
         .whereIn("id", ids)
         .andWhere("status", "active")
@@ -29,7 +31,7 @@ function setCompletedArr(ids){
 
 function setCompletedAll(){
     const rightnow = new Date();
-    const comparison = (process.env.DB_ENV == "production") ? rightnow.toISOString() : Date.now();
+    const comparison =  rightnow.toISOString();
     return db("auctions")
         .where("status", "active")
         .andWhere("end_datetime", "<", comparison)
@@ -38,7 +40,7 @@ function setCompletedAll(){
 
 function checkExpired(id){
     const rightnow = new Date();
-    const comparison = (process.env.DB_ENV == "production") ? rightnow.toISOString() : Date.now();
+    const comparison = rightnow.toISOString();
     return db("auctions")
         .where("id", id)
         .then(resp => {
