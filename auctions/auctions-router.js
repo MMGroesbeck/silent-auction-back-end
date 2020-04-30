@@ -6,6 +6,24 @@ const TimeCheck = require("../api/compare-timestamps.js");
 const authenticator = require("../api/authenticator.js");
 const sellerOnly = require("../api/seller-only.js");
 
+router.get("/seller", authenticator, (req, res) => {
+  TimeCheck.setCompletedAll()
+  .then(resp => {
+    Auctions.findBy({ user_id: req.decodedToken.userId })
+    .then((auct) => {
+      res.status(200).json(auct);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ errorMessage: error.message });
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500).json({ errorMessage: error.message });
+  });
+});
+
 router.get("/:id/bids", authenticator, (req, res) => {
   Auctions.findBy({ id: req.params.id }).then((auct) => {
     if (auct.length == 0) {
@@ -46,24 +64,6 @@ router.get("/:id/bids", authenticator, (req, res) => {
         res.status(400).json({ message: "Only seller can see list of bids." });
       }
     }
-  });
-});
-
-router.get("/seller", authenticator, (req, res) => {
-  TimeCheck.setCompletedAll()
-  .then(resp => {
-    Auctions.findBy({ user_id: req.decodedToken.userId })
-    .then((auct) => {
-      res.status(200).json(auct);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).json({ errorMessage: error.message });
-    });
-  })
-  .catch((error) => {
-    console.log(error);
-    res.status(500).json({ errorMessage: error.message });
   });
 });
 
