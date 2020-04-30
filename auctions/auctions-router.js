@@ -49,6 +49,24 @@ router.get("/:id/bids", authenticator, (req, res) => {
   });
 });
 
+router.get("/seller", authenticator, (req, res) => {
+  TimeCheck.setCompletedAll()
+  .then(resp => {
+    Auctions.findBy({ user_id: req.decodedToken.userId })
+    .then((auct) => {
+      res.status(200).json(auct);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ errorMessage: error.message });
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500).json({ errorMessage: error.message });
+  });
+});
+
 router.get("/:id", (req, res) => {
   Auctions.findBy({ id: req.params.id })
     .then((auct) => {
@@ -68,24 +86,6 @@ router.get("/:id", (req, res) => {
       console.log(error);
       res.status(500).json({ errorMessage: error.message });
     });
-});
-
-router.get("/seller", authenticator, (req, res) => {
-  TimeCheck.setCompletedAll()
-  .then(resp => {
-    Auctions.findBy({ user_id: req.decodedToken.userId })
-    .then((auct) => {
-      res.status(200).json(auct);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).json({ errorMessage: error.message });
-    });
-  })
-  .catch((error) => {
-    console.log(error);
-    res.status(500).json({ errorMessage: error.message });
-  });
 });
 
 router.get("/", (req, res) => {
