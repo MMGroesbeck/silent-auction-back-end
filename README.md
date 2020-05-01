@@ -1,26 +1,24 @@
-# back-end
-WEB Unit 4
+# Silent Auctions
+## auction fundraiser app for community groups
+Lambda School WEB
+April 2020
 
-## Test Users:
-id:1
-username: mila
-password: mila
-role: bidder
+## [Back End](https://github.com/Build-Week-Silent-Auction-3/back-end) Developers
+- [Natalia Beckstead](https://github.com/NataliaBeckstead)-- JavaScript, Node.js, Express.js, PostgreSQL, Jest, Knex.js
+- [M Groesbeck](https://github.com/MMGroesbeck) -- JavaScript, Node.js, Express.js, PostgreSQL, Jest, Knex.js
 
-id:2
-username: test1
-password: test1
-email: test1@test.com
-role: bidder
+## Other App Components
 
-id:3
-username: test2
-password: test2
-email: test2@test.com
-role: seller
+### [Front End](https://github.com/Build-Week-Silent-Auction-3/front-end) -- React.js, JavaScript, HTML, CSS
+#### React 2 Developers
+- [Michael Barnes](https://github.com/michaelbarnes7282)
+- [Ivan Tejano](https://github.com/tejanogenard)
+#### React 1 Developer
+- [Allan V. Pimble, Sr](https://github.com/avpimblesr)
 
-id:4
-username: test3
-password: test3
-email: test3@test.com
-role: seller
+### [UI](https://github.com/Build-Week-Silent-Auction-3/marketing-page) -- HTML, CSS, Less
+#### UI Developer
+- [Sean Gauer](https://github.com/gmansland)
+
+## Project Lead
+- [Natalie Davis](https://github.com/FreedomWriter)
